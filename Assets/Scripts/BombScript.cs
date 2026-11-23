@@ -68,7 +68,6 @@ public class BombScript : MonoBehaviour, DamageSource
     private void UpdateRotation()
     {
         Vector3 direction = Vector3.Normalize(transform.position - lastPos);
-        Debug.Log(direction);
         arrowSprite.rotation = Quaternion.LookRotation(Vector3.forward, Quaternion.Euler(0, 0, 90) * direction);
     }
 
@@ -79,7 +78,6 @@ public class BombScript : MonoBehaviour, DamageSource
         rb.linearVelocity = Vector3.zero;
         foreach (GameObject g in triggerItems)
         {
-            Debug.Log(g.gameObject.name);
             Damageable d = g.GetComponent<Damageable>();
             if ( d!= null)
             {
