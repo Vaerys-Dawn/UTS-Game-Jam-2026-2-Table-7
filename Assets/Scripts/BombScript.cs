@@ -9,7 +9,8 @@ public class BombScript : MonoBehaviour, DamageSource
     int doExplode = -400;
     private List<GameObject> triggerItems = new List<GameObject>();
     [SerializeField]
-    SpriteRenderer spriteRenderer;
+    GameObject animSource;
+    Animator animator;
 
     public GameObject GetSource()
     {
@@ -25,7 +26,7 @@ public class BombScript : MonoBehaviour, DamageSource
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -46,7 +47,8 @@ public class BombScript : MonoBehaviour, DamageSource
 
     private void Explode()
     {
-        spriteRenderer.enabled = true;
+        animSource.SetActive(true);
+        animator.SetTrigger("Explode");
         this.GetComponent<Rigidbody2D>().linearVelocity = Vector3.zero;
         Debug.Log(triggerItems);
         foreach (GameObject g in triggerItems)
