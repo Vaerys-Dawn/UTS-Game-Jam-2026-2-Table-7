@@ -65,7 +65,7 @@ public class PlayerMove : MonoBehaviour
             Rigidbody2D rbProj = proj.GetComponent<Rigidbody2D>();
             Vector3 dir = Vector3.Normalize(controls.Look);
             if (dir == Vector3.zero) dir = Vector3.left;
-            rbProj.AddForce(dir * 5000);
+            rbProj.AddForce(dir * 2000);
         }
 
         HandleMovement();
@@ -108,6 +108,14 @@ public class PlayerMove : MonoBehaviour
         Debug.DrawLine(GetRayPos(), GetRayPos() + (Vector3.down * jumpDist), Color.red);
         Debug.DrawLine(GetRayPos() - offset, GetRayPos() - offset + (Vector3.down * jumpDist), Color.red);
         Debug.DrawLine(GetRayPos() + offset, GetRayPos() + offset + (Vector3.down * jumpDist), Color.red);
+
+        if (controls != null)
+        {
+            Vector3 endPos = new Vector3(controls.Look.x, controls.Look.y, 0) * 5;
+
+            Debug.DrawLine(this.transform.position, this.transform.position + endPos);
+        }
+       
     }
 
     private bool IsOnGround()
