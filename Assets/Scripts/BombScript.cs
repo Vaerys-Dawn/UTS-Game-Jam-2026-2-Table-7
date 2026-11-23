@@ -6,8 +6,10 @@ using UnityEngine;
 public class BombScript : MonoBehaviour, DamageSource
 {
     GameObject source = null;
-    int doExplode = -1;
+    int doExplode = -400;
     private List<GameObject> triggerItems = new List<GameObject>();
+    [SerializeField]
+    SpriteRenderer spriteRenderer;
 
     public GameObject GetSource()
     {
@@ -28,18 +30,24 @@ public class BombScript : MonoBehaviour, DamageSource
 
     void FixedUpdate()
     {
-        if (doExplode != -1 && Time.timeScale != 0)
+        if (doExplode != -400 && Time.timeScale != 0)
         {
             doExplode--;
             if (doExplode == 0)
             {
                 Explode();
             }
+            else if (doExplode < -40)
+            {
+                Destroy(this.gameObject);
+            }
         }
     }
 
     private void Explode()
     {
+        spriteRenderer.enabled = true;
+        this.GetComponent<Rigidbody2D>().linearVelocity = Vector3.zero;
         Debug.Log(triggerItems);
         foreach (GameObject g in triggerItems)
         {
@@ -51,7 +59,7 @@ public class BombScript : MonoBehaviour, DamageSource
             }
         }
         Debug.Log("Kaboom");
-        Destroy(this.gameObject);
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
