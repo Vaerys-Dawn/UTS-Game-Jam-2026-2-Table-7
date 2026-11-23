@@ -1,5 +1,7 @@
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -33,7 +35,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform projectilePos;
 
-
+    [SerializeField]
+    private CollectNPCS npcCollector;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -67,6 +70,19 @@ public class PlayerMove : MonoBehaviour
             Vector3 dir = Vector3.Normalize(controls.Look);
             if (dir == Vector3.zero) dir = Vector3.left;
             rbProj.AddForce(dir * 2000);
+        }
+
+        if (controls.Special)
+        {
+            foreach (GameObject g in npcCollector.getNpcs())
+            {
+                Rigidbody2D npcRB = g.GetComponent<Rigidbody2D>();
+                if (npcRB != null)
+                {
+                    Vector2 dir = Vector3.Normalize(this.transform.position + (Vector3.up * 3) - npcRB.transform.position);
+                    npcRB.AddForce(dir * 2000);
+                }
+            }
         }
 
         HandleMovement();
@@ -118,6 +134,7 @@ public class PlayerMove : MonoBehaviour
         }
        
     }
+
 
     private bool IsOnGround()
     {
