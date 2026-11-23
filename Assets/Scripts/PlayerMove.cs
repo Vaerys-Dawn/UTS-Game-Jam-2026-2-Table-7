@@ -22,6 +22,8 @@ public class PlayerMove : MonoBehaviour
     float jumpDist = 0.5f;
     [SerializeField]
     private float rayStartPos = 0.9f;
+    [SerializeField]
+    private float jumpLock = 0f;
 
     private string[] floorLayers = { "Terrain" };
 
@@ -49,7 +51,8 @@ public class PlayerMove : MonoBehaviour
     {
         HandleCooldowns();
         bool grounded = IsOnGround();
-        if (!grounded) hasJumped = false;
+        jumpLock -= Time.deltaTime;
+        if (grounded && jumpLock <= 0f && rb.linearVelocityY <= 0.01f) hasJumped = false; //reset jump when on ground and not moving up
 
         if (controls.Jump) {
             Debug.Log("Jump Pressed");
@@ -59,6 +62,7 @@ public class PlayerMove : MonoBehaviour
         {
             rb.linearVelocityY = 0.0f;
             rb.AddForce(Vector2.up * 1000 * jumpMod);
+            jumpLock = 0.5f; // Set a lock time for jumping
             hasJumped = true;
         }
 
