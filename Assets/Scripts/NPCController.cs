@@ -33,7 +33,7 @@ public class NPCController : MonoBehaviour, Damageable
         if (health < 0)
         {
             animation.Play("Die");
-            Destroy(this,1f);
+            Destroy(this.gameObject,1f);
         }
     }
     private void Action()
