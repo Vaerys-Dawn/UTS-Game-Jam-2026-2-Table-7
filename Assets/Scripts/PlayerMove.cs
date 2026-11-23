@@ -30,6 +30,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private GameObject projectile;
 
+    [SerializeField]
+    private Transform projectilePos;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,6 +61,11 @@ public class PlayerMove : MonoBehaviour
 
         if (controls.Attack) {
             GameObject proj = Instantiate(projectile);
+            proj.transform.position = projectilePos.position;
+            Rigidbody2D rbProj = proj.GetComponent<Rigidbody2D>();
+            Vector3 dir = Vector3.Normalize(controls.Look);
+            if (dir == Vector3.zero) dir = Vector3.left;
+            rbProj.AddForce(dir * 5000);
         }
 
         HandleMovement();
