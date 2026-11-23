@@ -27,6 +27,9 @@ public class PlayerMove : MonoBehaviour
 
     Controls controls;
 
+    [SerializeField]
+    private GameObject projectile;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -50,6 +53,10 @@ public class PlayerMove : MonoBehaviour
             rb.linearVelocityY = 0.0f;
             rb.AddForce(Vector2.up * 1000 * jumpMod);
             hasJumped = true;
+        }
+
+        if (controls.Attack) {
+            GameObject proj = Instantiate(projectile);
         }
 
         HandleMovement();
@@ -78,7 +85,7 @@ public class PlayerMove : MonoBehaviour
         float movement = speedDif;
 
         //Convert this to a vector and apply to rigidbody
-        Debug.Log("Movement: " + movement + ", SpeedDif: " + speedDif + ", Target Speed: " + targetSpeed + ", Move: " + controls.Move.x);
+        //Debug.Log("Movement: " + movement + ", SpeedDif: " + speedDif + ", Target Speed: " + targetSpeed + ", Move: " + controls.Move.x);
         rb.AddForce(movement * Vector2.right, ForceMode2D.Force);
     }
 
