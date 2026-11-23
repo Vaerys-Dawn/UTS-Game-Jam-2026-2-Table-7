@@ -9,5 +9,5 @@ public interface Damageable
     /// Handle damage from all sources here
     /// </summary>
     /// <returns>Returns true if damage was performed</returns>
-    public bool HandleDamage(DamageSource source);
+    public bool HandleDamage(DamageSource source, int amount);
 }
