@@ -45,6 +45,11 @@ public class Controls : MonoBehaviour
     void Update()
     {
         Move = _moveAction.ReadValue<Vector2>();
+
+        if (_lookAction.activeControl != null && _lookAction.activeControl.displayName == "Mouse")
+        {
+            Debug.Log("Mouse Moving");
+        }
         Look = _lookAction.ReadValue<Vector2>();
         JumpStart = _jumpAction.WasPressedThisFrame();
         JumpEnd = _jumpAction.WasReleasedThisFrame();
