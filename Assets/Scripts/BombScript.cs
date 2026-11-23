@@ -40,8 +40,10 @@ public class BombScript : MonoBehaviour, DamageSource
 
     private void Explode()
     {
+        Debug.Log(triggerItems);
         foreach (GameObject g in triggerItems)
         {
+            Debug.Log(g.gameObject.name);
             Damageable d = g.GetComponent<Damageable>();
             if ( d!= null)
             {

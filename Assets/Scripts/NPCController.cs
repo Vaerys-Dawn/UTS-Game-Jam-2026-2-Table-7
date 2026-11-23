@@ -30,7 +30,7 @@ public class NPCController : MonoBehaviour, Damageable
             Action();
             time = 0;
         }
-        if (health < 0)
+        if (health <= 0)
         {
             animation.Play("Die");
             Destroy(this.gameObject,1f);
@@ -59,6 +59,7 @@ public class NPCController : MonoBehaviour, Damageable
     }
     public bool HandleDamage(DamageSource source, int damage)
     {
+        Debug.Log("damage");
         if (source.GetSource().CompareTag("Player"))
         {
             Debug.Log("hit by Player");

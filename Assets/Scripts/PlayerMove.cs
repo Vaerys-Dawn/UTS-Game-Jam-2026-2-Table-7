@@ -61,6 +61,7 @@ public class PlayerMove : MonoBehaviour
 
         if (controls.Attack) {
             GameObject proj = Instantiate(projectile);
+            proj.GetComponent<BombScript>().SetSource(this.gameObject);
             proj.transform.position = projectilePos.position;
             Rigidbody2D rbProj = proj.GetComponent<Rigidbody2D>();
             Vector3 dir = Vector3.Normalize(controls.Look);
