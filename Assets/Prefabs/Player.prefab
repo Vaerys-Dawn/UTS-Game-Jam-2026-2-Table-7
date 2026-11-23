@@ -339,6 +339,7 @@ MonoBehaviour:
   jumpMod: 1.3
   jumpDist: 0.5
   rayStartPos: 0.9
+  projectile: {fileID: 7430208704978886154, guid: ae9992328a1cc8e468b60af4240c36d1, type: 3}
 --- !u!1 &5036511905096165084
 GameObject:
   m_ObjectHideFlags: 0
