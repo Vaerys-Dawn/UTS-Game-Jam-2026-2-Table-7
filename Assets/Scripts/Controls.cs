@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class Controls : MonoBehaviour
@@ -11,8 +12,12 @@ public class Controls : MonoBehaviour
     private InputAction _specialAction;
     private InputAction _nextAction;
     private InputAction _prevAction;
+    private InputAction _mouseAction;
 
     public Vector2 Move { private set; get; }
+
+    private bool mouseUsed;
+
     public Vector2 Look { private set; get; }
     public bool Jump { private set; get; }
     public bool JumpEnd { private set; get; }
@@ -26,12 +31,17 @@ public class Controls : MonoBehaviour
     public bool Prev { private set; get; }
 
 
+    private Vector2 lastMousePos;
+    private Vector2 lastGamepadPos;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         _moveAction = InputSystem.actions["Move"];
         _lookAction = InputSystem.actions["Look"];
+        _mouseAction = InputSystem.actions["Mouse"];
         _dashAction = InputSystem.actions["Dash"];
         _jumpAction = InputSystem.actions["Jump"];
         _attackAction = InputSystem.actions["Attack"];
@@ -46,11 +56,49 @@ public class Controls : MonoBehaviour
     {
         Move = _moveAction.ReadValue<Vector2>();
 
-        if (_lookAction.activeControl != null && _lookAction.activeControl.displayName == "Mouse")
+        if (_lookAction.activeControl != null)
         {
-            Debug.Log("Mouse Moving");
+            Debug.Log(_lookAction.activeControl.name + ", " + _lookAction.activeControl.displayName + ", " + _lookAction.activeControl.device);
         }
-        Look = _lookAction.ReadValue<Vector2>();
+
+        Vector2 location = _mouseAction.ReadValue<Vector2>();
+        Vector2 temp2 = _lookAction.ReadValue<Vector2>();
+        Vector2 temp = new Vector2(location.x - Screen.width / 2, location.y - Screen.height / 2).normalized;
+
+        if (Mathf.Abs(temp2.x) < 0.1f && Mathf.Abs(temp2.y) < 0.1f)
+        {
+            temp2 = Vector2.zero;
+        }
+        temp2 = Vector2.Normalize(temp2);
+
+        if (lastMousePos == temp)
+        {
+            if (temp2 != Vector2.zero)
+            {
+                mouseUsed = false;
+                Look = temp2;
+                lastGamepadPos = temp2;
+            }
+        }
+        else
+        {
+            mouseUsed = true;
+            Look = temp;
+            lastMousePos = temp;
+        }
+
+        if (lastMousePos == temp && (lastGamepadPos == temp2 || temp2 == Vector2.zero))
+        {
+            if (mouseUsed)
+            {
+                Look = lastMousePos;
+            }else
+            {
+                Look = lastGamepadPos;
+            }
+        }
+        
+
         JumpStart = _jumpAction.WasPressedThisFrame();
         JumpEnd = _jumpAction.WasReleasedThisFrame();
         JumpHeld = _jumpAction.IsPressed();
