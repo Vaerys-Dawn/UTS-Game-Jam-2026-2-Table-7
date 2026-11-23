@@ -3,15 +3,14 @@ using UnityEngine.InputSystem;
 
 public class Controls : MonoBehaviour
 {
-    public InputAction _moveAction;
-    public InputAction _lookAction;
-    public InputAction _jumpAction;
-    public InputAction _dashAction;
-    public InputAction _attackAction;
-    public InputAction _specialAction;
-    public InputAction _nextAction;
-    public InputAction _prevAction;
-
+    private InputAction _moveAction;
+    private InputAction _lookAction;
+    private InputAction _jumpAction;
+    private InputAction _dashAction;
+    private InputAction _attackAction;
+    private InputAction _specialAction;
+    private InputAction _nextAction;
+    private InputAction _prevAction;
 
     public Vector2 Move { private set; get; }
     public Vector2 Look { private set; get; }
@@ -28,7 +27,7 @@ public class Controls : MonoBehaviour
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         _moveAction = InputSystem.actions["Move"];
         _lookAction = InputSystem.actions["Look"];
@@ -38,6 +37,7 @@ public class Controls : MonoBehaviour
         _specialAction = InputSystem.actions["Special"];
         _nextAction = InputSystem.actions["Next"];
         _prevAction = InputSystem.actions["Previous"];
+        DontDestroyOnLoad(this);
     }
 
     // Update is called once per frame
