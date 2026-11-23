@@ -17,6 +17,7 @@ public class Controls : MonoBehaviour
     public bool Jump { private set; get; }
     public bool JumpEnd { private set; get; }
     public bool JumpStart { private set; get; }
+    public bool JumpHeld { private set; get; }
     public bool Dash { private set; get; }
     public bool Attack { private set; get; }
     public bool Special { private set; get; }
@@ -47,6 +48,7 @@ public class Controls : MonoBehaviour
         Look = _lookAction.ReadValue<Vector2>();
         JumpStart = _jumpAction.WasPressedThisFrame();
         JumpEnd = _jumpAction.WasReleasedThisFrame();
+        JumpHeld = _jumpAction.IsPressed();
         Jump = _jumpAction.WasPerformedThisFrame();
         Dash = _dashAction.WasPressedThisFrame();
         Attack = _attackAction.WasPressedThisFrame();
