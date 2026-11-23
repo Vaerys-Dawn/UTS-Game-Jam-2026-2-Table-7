@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcdd059b0e7c3a547879162141a6ea82, type: 3}
   m_Name: BreakableTile
   m_EditorClassIdentifier: Assembly-CSharp::BreakableTile
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 7780190520650127750, guid: 1f563bedf2db8144fa8d8750a6bc7d55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
