@@ -6,6 +6,8 @@ public class NPCController : MonoBehaviour, Damageable
 
     private float time;
     private float nextMoveTime;
+    public float moveTimeInterval;
+    public GameObject sprite;
     private Rigidbody2D forces;
     public float forcesApplied = 10;
     public float health = 100;
@@ -14,9 +16,9 @@ public class NPCController : MonoBehaviour, Damageable
     //movement variables
     void Start()
     {
-        animation = GetComponent<Animator>();
+        animation = sprite.GetComponent<Animator>();
         forces = GetComponent<Rigidbody2D>();
-        nextMoveTime = Random.Range(1f, 10f);
+        nextMoveTime = Random.Range(1f, moveTimeInterval);
     }
     
 
@@ -26,7 +28,7 @@ public class NPCController : MonoBehaviour, Damageable
         time += Time.deltaTime;
         if (time > nextMoveTime)
         {
-            nextMoveTime = Random.Range(1f, 10f);
+            nextMoveTime = Random.Range(1f, moveTimeInterval);
             Action();
             time = 0;
         }
@@ -42,11 +44,20 @@ public class NPCController : MonoBehaviour, Damageable
         {
             case 0:
                 forces.AddForceX(forcesApplied, ForceMode2D.Impulse);
-                animation.Play("Right");
+                animation.Play("Run");
+                if (sprite.transform.localScale.x < 0)
+                {
+                    sprite.transform.localScale = new Vector2(sprite.transform.localScale.x, sprite.transform.localScale.y);
+                }
                 break;
             case 1:
                 forces.AddForceX(-forcesApplied, ForceMode2D.Impulse);
-                animation.Play("Left");
+                animation.Play("Run");
+                if (sprite.transform.localScale.x > 0)
+                {
+                    sprite.transform.localScale = new Vector2(-sprite.transform.localScale.x, sprite.transform.localScale.y);
+                }
+                
                 break;
             default: // ono.
                 break;
@@ -60,14 +71,6 @@ public class NPCController : MonoBehaviour, Damageable
     public bool HandleDamage(DamageSource source, int damage)
     {
         Debug.Log("damage");
-        if (source.GetSource().CompareTag("Player"))
-        {
-            //Debug.Log("hit by Player");
-        }
-        else if (source.GetSource().CompareTag("Enemy"))
-        {
-            //Debug.Log("hit by enemy");
-        }
         health -= damage;
         return true;
     }
