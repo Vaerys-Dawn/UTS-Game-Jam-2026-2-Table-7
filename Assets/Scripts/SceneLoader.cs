@@ -16,6 +16,10 @@ public class SceneLoader : MonoBehaviour
     [SerializeField]
     private string playerTag = "Player";
 
+    [Tooltip("Load the level the player was last in (e.g. a Try Again button). Falls back to Scene Name if no level has been played yet.")]
+    [SerializeField]
+    private bool loadLastLevel = false;
+
     private Collider2D ownCollider;
     private bool isLoading = false;
 
@@ -55,6 +59,10 @@ public class SceneLoader : MonoBehaviour
     public void LoadScene()
     {
         if (isLoading) return;
+
+        string sceneName = this.sceneName;
+        if (loadLastLevel && !string.IsNullOrEmpty(LevelManager.LastLevelScene))
+            sceneName = LevelManager.LastLevelScene;
 
         if (string.IsNullOrWhiteSpace(sceneName))
         {

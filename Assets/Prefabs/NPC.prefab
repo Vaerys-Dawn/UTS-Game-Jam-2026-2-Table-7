@@ -4884,7 +4884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dcd117bbddd56449bbdef68514a59a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  moveTimeInterval: 0
+  moveTimeInterval: 10
   forcesApplied: 10
   health: 100
   particles: {fileID: 4504513759073763459}
@@ -4928,7 +4928,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
