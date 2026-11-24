@@ -885,10 +885,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e41e3b4cb75764c469d09efd02e03d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
-  sceneName: MainMenu
+  sceneName: Level1
   loadOnPlayerTouch: 1
   loadOnClick: 1
   playerTag: Player
+  loadLastLevel: 1
 --- !u!114 &1609225907
 MonoBehaviour:
   m_ObjectHideFlags: 0
