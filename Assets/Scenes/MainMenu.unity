@@ -712,6 +712,7 @@ MonoBehaviour:
   loadOnPlayerTouch: 1
   loadOnClick: 1
   playerTag: Player
+  loadLastLevel: 0
 --- !u!1 &1274619682
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,10 +1178,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e41e3b4cb75764c469d09efd02e03d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
-  sceneName: Level1
+  sceneName: Level2
   loadOnPlayerTouch: 1
   loadOnClick: 1
   playerTag: Player
+  loadLastLevel: 0
 --- !u!1 &2085279125
 GameObject:
   m_ObjectHideFlags: 0
