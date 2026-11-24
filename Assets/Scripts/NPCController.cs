@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NPCController : MonoBehaviour, Damageable
+public class NPCController : MonoBehaviour, Damageable, Protectable
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -13,6 +13,10 @@ public class NPCController : MonoBehaviour, Damageable
     public float health = 100;
     private Animator animation;
     private bool isDead = false;
+    private float protectionTime = 0;
+
+    [SerializeField]
+    GameObject particles;
 
     //movement variables
     void Start()
@@ -27,6 +31,11 @@ public class NPCController : MonoBehaviour, Damageable
     // Update is called once per frame
     void Update()
     {
+        if (protectionTime > 0)
+        {
+            protectionTime -= Time.deltaTime;
+        }
+        particles.SetActive(protectionTime > 0);
         time += Time.deltaTime;
         if (time > nextMoveTime)
         {
@@ -67,8 +76,14 @@ public class NPCController : MonoBehaviour, Damageable
     }
     public bool HandleDamage(DamageSource source, int damage)
     {
+        if (protectionTime > 0) return false;
         Debug.Log("damage");
         health -= damage;
         return true;
+    }
+
+    public void SetProtection(float duration)
+    {
+        protectionTime = duration;
     }
 }
