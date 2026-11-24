@@ -7,7 +7,7 @@ public class NPCController : MonoBehaviour, Damageable
     private float time;
     private float nextMoveTime;
     public float moveTimeInterval;
-    public GameObject sprite;
+    private GameObject sprite;
     private Rigidbody2D forces;
     public float forcesApplied = 10;
     public float health = 100;
@@ -16,6 +16,7 @@ public class NPCController : MonoBehaviour, Damageable
     //movement variables
     void Start()
     {
+        sprite = GetComponentInChildren<SpriteRenderer>().gameObject;
         animation = sprite.GetComponent<Animator>();
         forces = GetComponent<Rigidbody2D>();
         nextMoveTime = Random.Range(1f, moveTimeInterval);
@@ -34,7 +35,6 @@ public class NPCController : MonoBehaviour, Damageable
         }
         if (health <= 0)
         {
-            animation.Play("Die");
             Destroy(this.gameObject,1f);
         }
     }
@@ -44,19 +44,13 @@ public class NPCController : MonoBehaviour, Damageable
         {
             case 0:
                 forces.AddForceX(forcesApplied, ForceMode2D.Impulse);
-                animation.Play("Run");
-                if (sprite.transform.localScale.x < 0)
-                {
-                    sprite.transform.localScale = new Vector2(sprite.transform.localScale.x, sprite.transform.localScale.y);
-                }
+                animation.Play("run");
+                sprite.transform.localScale = new Vector2(5, sprite.transform.localScale.y);
                 break;
             case 1:
                 forces.AddForceX(-forcesApplied, ForceMode2D.Impulse);
-                animation.Play("Run");
-                if (sprite.transform.localScale.x > 0)
-                {
-                    sprite.transform.localScale = new Vector2(-sprite.transform.localScale.x, sprite.transform.localScale.y);
-                }
+                animation.Play("run");
+                sprite.transform.localScale = new Vector2(-5, sprite.transform.localScale.y);
                 
                 break;
             default: // ono.
