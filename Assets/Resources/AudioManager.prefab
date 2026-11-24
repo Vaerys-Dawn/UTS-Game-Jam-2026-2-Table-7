@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5281734619027341001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5281734619027341002}
+  - component: {fileID: 5281734619027341003}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5281734619027341002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5281734619027341001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5281734619027341003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5281734619027341001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf5d87826624be38f2cd61adc09b95e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  titleMusic: {fileID: 8300000, guid: 850367019cb3297479393d5ef965f0e5, type: 3}
+  levelMusic: {fileID: 8300000, guid: ff07118f90886b44f94b3ae0cdaf64e4, type: 3}
+  musicVolume: 0.5
+  titleMusicScenes:
+  - MainMenu
+  - Credit
+  - Win
+  - Lose
+  jump: {fileID: 8300000, guid: 3958bef8ed7f2c849bae46c57e7c89c9, type: 3}
+  attackThrow: {fileID: 8300000, guid: 8e20ae718d46d5742902dab3dab591bc, type: 3}
+  attackHit: {fileID: 8300000, guid: b6aeb68994605f64a9ce023bfb270a8e, type: 3}
+  dash: {fileID: 8300000, guid: 4e5b757096fc06649bf17ba31116628d, type: 3}
+  npcDeath: {fileID: 8300000, guid: fd57344f7c05c3e4d934dbe51a8a4e95, type: 3}
+  sfxVolume: 0.8
+  pitchVariation: 0.08

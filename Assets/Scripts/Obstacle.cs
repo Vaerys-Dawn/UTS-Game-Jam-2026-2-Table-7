@@ -25,6 +25,7 @@ public class Obstacle : MonoBehaviour
         // Destroy the whole NPC instantly (no animation).
         // GetComponentInParent also finds the NPC if the collider is on a child object.
         NPCController npc = other.GetComponentInParent<NPCController>();
+        AudioManager.Play(AudioManager.Sfx.NpcDeath);
         Destroy(npc != null ? npc.gameObject : other);
     }
 }

@@ -48,9 +48,31 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform playerSprite;
 
+    [Header("Dash")]
+    [SerializeField]
+    private float dashSpeed = 35f;
+    [SerializeField]
+    private float dashDuration = 0.15f;
+    [SerializeField]
+    private float dashCooldown = 0.6f;
+
+    private float dashTimer = 0f;          // > 0 while dashing
+    private float dashCooldownTimer = 0f;  // > 0 while dash is recharging
+    private float dashDirection = 1f;
+    private float savedGravity = 1f;
+
     private float attackDelay = -3;
     [SerializeField]
     private float windup = 0.5f;
+
+    [SerializeField]
+    private Transform reticle;
+    [SerializeField]
+    private float protDuration = 5;
+    [SerializeField]
+    private GameObject shieldPrefab;
+    [SerializeField]
+    private GameObject LazerPrefab;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -78,24 +100,49 @@ public class PlayerMove : MonoBehaviour
             rb.AddForce(Vector2.up * 1000 * jumpMod);
             jumpLock = 0.5f; // Set a lock time for jumping
             hasJumped = true;
+            AudioManager.Play(AudioManager.Sfx.Jump);
         }
 
   
 
         if (controls.Special)
         {
+            GameObject lazer = Instantiate(LazerPrefab, transform);
+            lazer.transform.position = transform.position + (Vector3.up * 3);
             foreach (GameObject g in npcCollector.getNpcs())
             {
                 Rigidbody2D npcRB = g.GetComponent<Rigidbody2D>();
-                if (npcRB != null)
+                float distance = Vector3.Distance(transform.position, npcRB.position);
+
+
+                if (npcRB != null && distance <= 10)
                 {
-                    Vector2 dir = Vector3.Normalize(this.transform.position + (Vector3.up * 3) - npcRB.transform.position);
+                    Vector3 direction = this.transform.position + (Vector3.up * 3) - npcRB.transform.position;
+                    Vector2 dir = Vector3.Normalize(direction);
                     npcRB.AddForce(dir * 2000);
                 }
             }
         }
+        if (controls.Interact)
+        {
+            Debug.Log("Interact Pressed");
+            GameObject shield = Instantiate(shieldPrefab);
+            shield.transform.position = transform.position;
+            foreach (GameObject g in npcCollector.getNpcs())
+            {
+                Protectable prot = g.GetComponent<Protectable>();
+                float distance = Vector3.Distance(transform.position, g.transform.position);
 
-        HandleMovement();
+                if (prot != null && distance <= 6)
+                {
+                    prot.SetProtection(protDuration);
+                }
+            }
+        }
+
+
+        HandleDash();
+        if (dashTimer <= 0f) HandleMovement(); // the dash controls the velocity while it lasts
 
         if (IsFacingRight)
         {
@@ -120,14 +167,62 @@ public class PlayerMove : MonoBehaviour
         {
             GameObject proj = Instantiate(projectile);
             proj.GetComponent<BombScript>().SetSource(this.gameObject, transform.position + projectilePos, Vector3.Normalize(controls.Look));
+            AudioManager.Play(AudioManager.Sfx.Throw);
             attackDelay = -3;
         }
+        RotateReticle();
+    }
 
+    private void RotateReticle()
+    {
+        reticle.localPosition = projectilePos;
+        if (controls != null)
+        {
+            Vector3 endPos = new Vector3(controls.Look.x, controls.Look.y, 0) * 5;
+
+            Vector3 dir = transform.position - transform.position + endPos;
+            reticle.rotation = Quaternion.LookRotation(Vector3.forward, dir);
+        }
     }
 
     private void HandleCooldowns()
     {
       
+    }
+
+    // Quick horizontal burst in the held direction (or the way the player faces).
+    // Gravity is paused during the dash so it stays level, even in the air.
+    private void HandleDash()
+    {
+        if (dashCooldownTimer > 0f) dashCooldownTimer -= Time.deltaTime;
+
+        if (controls.Dash && dashTimer <= 0f && dashCooldownTimer <= 0f)
+        {
+            if (Mathf.Abs(controls.Move.x) > 0.1f)
+                dashDirection = Mathf.Sign(controls.Move.x);
+            else
+                dashDirection = IsFacingRight ? 1f : -1f;
+
+            IsFacingRight = dashDirection > 0f;
+            savedGravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            dashTimer = dashDuration;
+            dashCooldownTimer = dashCooldown;
+            animator.SetBool("IsRunning", true);
+            AudioManager.Play(AudioManager.Sfx.Dash);
+        }
+
+        if (dashTimer > 0f)
+        {
+            rb.linearVelocity = new Vector2(dashDirection * dashSpeed, 0f);
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0f)
+            {
+                // End of dash: give gravity back and drop to normal run speed.
+                rb.gravityScale = savedGravity;
+                rb.linearVelocity = new Vector2(dashDirection * maxSpeed, 0f);
+            }
+        }
     }
 
     private void HandleMovement()
@@ -152,14 +247,23 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("IsRunning", false);
         }
 
-        if (rb.linearVelocityX > 0.1f)
+        if (attackDelay != -3)
         {
-            IsFacingRight = true;
+            IsFacingRight = controls.Look.x > 0;
         }
-        else if (rb.linearVelocityX < -0.1f) 
-        { 
-            IsFacingRight = false;
+        else
+        {
+            if (rb.linearVelocityX > 0.1f)
+            {
+                IsFacingRight = true;
+            }
+            else if (rb.linearVelocityX < -0.1f)
+            {
+                IsFacingRight = false;
+            }
         }
+
+        
 
         //Convert this to a vector and apply to rigidbody
         //Debug.Log("Movement: " + movement + ", SpeedDif: " + speedDif + ", Target Speed: " + targetSpeed + ", Move: " + controls.Move.x);
