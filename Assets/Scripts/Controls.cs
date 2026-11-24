@@ -56,11 +56,6 @@ public class Controls : MonoBehaviour
     {
         Move = _moveAction.ReadValue<Vector2>();
 
-        if (_lookAction.activeControl != null)
-        {
-            Debug.Log(_lookAction.activeControl.name + ", " + _lookAction.activeControl.displayName + ", " + _lookAction.activeControl.device);
-        }
-
         Vector2 location = _mouseAction.ReadValue<Vector2>();
         Vector2 temp2 = _lookAction.ReadValue<Vector2>();
         Vector2 temp = new Vector2(location.x - Screen.width / 2, location.y - Screen.height / 2).normalized;

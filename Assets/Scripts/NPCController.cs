@@ -62,11 +62,11 @@ public class NPCController : MonoBehaviour, Damageable
         Debug.Log("damage");
         if (source.GetSource().CompareTag("Player"))
         {
-            Debug.Log("hit by Player");
+            //Debug.Log("hit by Player");
         }
         else if (source.GetSource().CompareTag("Enemy"))
         {
-            Debug.Log("hit by enemy");
+            //Debug.Log("hit by enemy");
         }
         health -= damage;
         return true;
