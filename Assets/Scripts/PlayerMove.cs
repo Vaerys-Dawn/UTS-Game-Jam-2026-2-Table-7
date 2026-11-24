@@ -52,6 +52,15 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private float windup = 0.5f;
 
+    [SerializeField]
+    private Transform reticle;
+    [SerializeField]
+    private float protDuration = 5;
+    [SerializeField]
+    private GameObject shieldPrefab;
+    [SerializeField]
+    private GameObject LazerPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -84,16 +93,39 @@ public class PlayerMove : MonoBehaviour
 
         if (controls.Special)
         {
+            GameObject lazer = Instantiate(LazerPrefab, transform);
+            lazer.transform.position = transform.position + (Vector3.up * 3);
             foreach (GameObject g in npcCollector.getNpcs())
             {
                 Rigidbody2D npcRB = g.GetComponent<Rigidbody2D>();
-                if (npcRB != null)
+                float distance = Vector3.Distance(transform.position, npcRB.position);
+
+
+                if (npcRB != null && distance <= 10)
                 {
-                    Vector2 dir = Vector3.Normalize(this.transform.position + (Vector3.up * 3) - npcRB.transform.position);
+                    Vector3 direction = this.transform.position + (Vector3.up * 3) - npcRB.transform.position;
+                    Vector2 dir = Vector3.Normalize(direction);
                     npcRB.AddForce(dir * 2000);
                 }
             }
         }
+        if (controls.Interact)
+        {
+            Debug.Log("Interact Pressed");
+            GameObject shield = Instantiate(shieldPrefab);
+            shield.transform.position = transform.position;
+            foreach (GameObject g in npcCollector.getNpcs())
+            {
+                Protectable prot = g.GetComponent<Protectable>();
+                float distance = Vector3.Distance(transform.position, g.transform.position);
+
+                if (prot != null && distance <= 6)
+                {
+                    prot.SetProtection(protDuration);
+                }
+            }
+        }
+
 
         HandleMovement();
 
@@ -122,7 +154,19 @@ public class PlayerMove : MonoBehaviour
             proj.GetComponent<BombScript>().SetSource(this.gameObject, transform.position + projectilePos, Vector3.Normalize(controls.Look));
             attackDelay = -3;
         }
+        RotateReticle();
+    }
 
+    private void RotateReticle()
+    {
+        reticle.localPosition = projectilePos;
+        if (controls != null)
+        {
+            Vector3 endPos = new Vector3(controls.Look.x, controls.Look.y, 0) * 5;
+
+            Vector3 dir = transform.position - transform.position + endPos;
+            reticle.rotation = Quaternion.LookRotation(Vector3.forward, dir);
+        }
     }
 
     private void HandleCooldowns()
@@ -152,14 +196,23 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("IsRunning", false);
         }
 
-        if (rb.linearVelocityX > 0.1f)
+        if (attackDelay != -3)
         {
-            IsFacingRight = true;
+            IsFacingRight = controls.Look.x > 0;
         }
-        else if (rb.linearVelocityX < -0.1f) 
-        { 
-            IsFacingRight = false;
+        else
+        {
+            if (rb.linearVelocityX > 0.1f)
+            {
+                IsFacingRight = true;
+            }
+            else if (rb.linearVelocityX < -0.1f)
+            {
+                IsFacingRight = false;
+            }
         }
+
+        
 
         //Convert this to a vector and apply to rigidbody
         //Debug.Log("Movement: " + movement + ", SpeedDif: " + speedDif + ", Target Speed: " + targetSpeed + ", Move: " + controls.Move.x);

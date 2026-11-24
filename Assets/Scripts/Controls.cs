@@ -10,6 +10,7 @@ public class Controls : MonoBehaviour
     private InputAction _dashAction;
     private InputAction _attackAction;
     private InputAction _specialAction;
+    private InputAction _interactAction;
     private InputAction _nextAction;
     private InputAction _prevAction;
     private InputAction _mouseAction;
@@ -46,6 +47,7 @@ public class Controls : MonoBehaviour
         _jumpAction = InputSystem.actions["Jump"];
         _attackAction = InputSystem.actions["Attack"];
         _specialAction = InputSystem.actions["Special"];
+        _interactAction = InputSystem.actions["Interact"];
         _nextAction = InputSystem.actions["Next"];
         _prevAction = InputSystem.actions["Previous"];
         DontDestroyOnLoad(this);
@@ -101,7 +103,7 @@ public class Controls : MonoBehaviour
         Dash = _dashAction.WasPressedThisFrame();
         Attack = _attackAction.WasPressedThisFrame();
         Special = _specialAction.WasPressedThisFrame();
-        Interact = _nextAction.WasPressedThisFrame();
+        Interact = _interactAction.WasPressedThisFrame();
         Next = _nextAction.WasPressedThisFrame();
         Prev = _prevAction.WasPressedThisFrame();
     }
