@@ -35,11 +35,13 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
         {
             protectionTime -= Time.deltaTime;
         }
-        particles.SetActive(protectionTime > 0);
+        // Not every prefab has a protection effect assigned (Enemy and NPC don't yet).
+        if (particles != null) particles.SetActive(protectionTime > 0);
         time += Time.deltaTime;
+        print(health);
         if (time > nextMoveTime)
         {
-            nextMoveTime = Random.Range(1f, moveTimeInterval);
+            nextMoveTime = Random.Range(0f, moveTimeInterval);
             Action();
             time = 0;
         }
@@ -52,6 +54,7 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
     }
     private void Action()
     {
+
         switch (Random.Range(0, 2))
         {
             case 0:
@@ -70,6 +73,9 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
         }
     }
     
+    // True once health hits 0 (the object stays around for a second before it's destroyed).
+    public bool IsDead => health <= 0;
+
     public bool CanBeDamaged()
     {
         return true;
@@ -77,6 +83,12 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
     public bool HandleDamage(DamageSource source, int damage)
     {
         if (protectionTime > 0) return false;
+        // Enemies can only be killed by the player, not by other enemies' bombs.
+        if (CompareTag("Enemy"))
+        {
+            GameObject attacker = source != null ? source.GetSource() : null;
+            if (attacker == null || !attacker.CompareTag("Player")) return false;
+        }
         Debug.Log("damage");
         health -= damage;
         return true;
