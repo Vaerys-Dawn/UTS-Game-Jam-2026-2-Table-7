@@ -38,9 +38,10 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
         // Not every prefab has a protection effect assigned (Enemy and NPC don't yet).
         if (particles != null) particles.SetActive(protectionTime > 0);
         time += Time.deltaTime;
+        print(health);
         if (time > nextMoveTime)
         {
-            nextMoveTime = Random.Range(1f, moveTimeInterval);
+            nextMoveTime = Random.Range(0f, moveTimeInterval);
             Action();
             time = 0;
         }
@@ -53,6 +54,7 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
     }
     private void Action()
     {
+
         switch (Random.Range(0, 2))
         {
             case 0:
