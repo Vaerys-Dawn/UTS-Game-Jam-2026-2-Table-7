@@ -2,9 +2,13 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
+    [SerializeField]
+    Canvas UI;
+    
     [SerializeField]
     Rigidbody2D rb;
 
@@ -170,6 +174,7 @@ public class PlayerMove : MonoBehaviour
             attackDelay = -3;
         }
         RotateReticle();
+        UI.GetComponentInChildren<Text>().text = "Dash Cooldown : " + dashCooldownTimer.ToString();
     }
 
     private void RotateReticle()
