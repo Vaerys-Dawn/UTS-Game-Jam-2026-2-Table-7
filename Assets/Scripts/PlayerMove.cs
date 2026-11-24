@@ -29,16 +29,28 @@ public class PlayerMove : MonoBehaviour
 
     private bool hasJumped = false;
 
+    private bool IsFacingRight = true;
+
     Controls controls;
 
     [SerializeField]
     private GameObject projectile;
 
     [SerializeField]
-    private Transform projectilePos;
+    private Vector3 projectilePos;
 
     [SerializeField]
     private CollectNPCS npcCollector;
+
+    [SerializeField]
+    private Animator animator;
+
+    [SerializeField]
+    private Transform playerSprite;
+
+    private float attackDelay = -3;
+    [SerializeField]
+    private float windup = 0.5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,6 +63,8 @@ public class PlayerMove : MonoBehaviour
     {
         HandleCooldowns();
         bool grounded = IsOnGround();
+        animator.SetBool("InAir", !grounded);
+        animator.SetBool("IsFalling", rb.linearVelocityY <= 0.01f);
         jumpLock -= Time.deltaTime;
         if (grounded && jumpLock <= 0f && rb.linearVelocityY <= 0.01f) hasJumped = false; //reset jump when on ground and not moving up
 
@@ -66,15 +80,7 @@ public class PlayerMove : MonoBehaviour
             hasJumped = true;
         }
 
-        if (controls.Attack) {
-            GameObject proj = Instantiate(projectile);
-            proj.GetComponent<BombScript>().SetSource(this.gameObject);
-            proj.transform.position = projectilePos.position;
-            Rigidbody2D rbProj = proj.GetComponent<Rigidbody2D>();
-            Vector3 dir = Vector3.Normalize(controls.Look);
-            if (dir == Vector3.zero) dir = Vector3.left;
-            rbProj.AddForce(dir * 2000);
-        }
+  
 
         if (controls.Special)
         {
@@ -91,6 +97,31 @@ public class PlayerMove : MonoBehaviour
 
         HandleMovement();
 
+        if (IsFacingRight)
+        {
+            playerSprite.localScale = new Vector3(4, 4, 4);
+            projectilePos.x = Mathf.Abs(projectilePos.x);
+        }else
+        {
+            playerSprite.localScale = new Vector3(-4, 4, 4);
+            projectilePos.x = -Mathf.Abs(projectilePos.x);
+        }
+
+        if (controls.Attack && attackDelay == -3)
+        {
+            animator.SetTrigger("Attack");
+            attackDelay = windup;
+        }
+        if (attackDelay >= 0)
+        {
+            attackDelay -= Time.deltaTime;
+        }
+        else if (attackDelay <= 0 && attackDelay != -3)
+        {
+            GameObject proj = Instantiate(projectile);
+            proj.GetComponent<BombScript>().SetSource(this.gameObject, transform.position + projectilePos, Vector3.Normalize(controls.Look));
+            attackDelay = -3;
+        }
 
     }
 
@@ -113,6 +144,22 @@ public class PlayerMove : MonoBehaviour
         //Calculate force along x-axis to apply to thr player
 
         float movement = speedDif;
+        if (Mathf.Abs(movement) > 0.1f)
+        {
+            animator.SetBool("IsRunning", true);
+        }else
+        {
+            animator.SetBool("IsRunning", false);
+        }
+
+        if (rb.linearVelocityX > 0.1f)
+        {
+            IsFacingRight = true;
+        }
+        else if (rb.linearVelocityX < -0.1f) 
+        { 
+            IsFacingRight = false;
+        }
 
         //Convert this to a vector and apply to rigidbody
         //Debug.Log("Movement: " + movement + ", SpeedDif: " + speedDif + ", Target Speed: " + targetSpeed + ", Move: " + controls.Move.x);
@@ -136,6 +183,8 @@ public class PlayerMove : MonoBehaviour
 
             Debug.DrawLine(this.transform.position, this.transform.position + endPos);
         }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(this.transform.position + projectilePos, 0.2f);
        
     }
 

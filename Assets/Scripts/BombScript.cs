@@ -28,10 +28,14 @@ public class BombScript : MonoBehaviour, DamageSource
         return source;
     }
 
-    public void SetSource(GameObject gameObject)
+    public void SetSource(GameObject sourceObj, Vector3 pos, Vector3 dir, float force = 2000f)
     {
-        this.source = gameObject;
-        lastPos = gameObject.transform.position;
+        this.source = sourceObj;
+        transform.position = pos;
+        lastPos = pos;
+        Rigidbody2D rbProj = gameObject.GetComponent<Rigidbody2D>();
+        if (dir == Vector3.zero) dir = Vector3.left;
+        rbProj.AddForce(dir * force);
         UpdateRotation();
     }
 
