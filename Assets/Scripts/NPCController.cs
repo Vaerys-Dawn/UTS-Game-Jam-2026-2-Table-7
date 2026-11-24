@@ -57,12 +57,12 @@ public class NPCController : MonoBehaviour, Damageable, Protectable
             case 0:
                 forces.AddForceX(forcesApplied, ForceMode2D.Impulse);
                 animation.Play("run");
-                sprite.transform.localScale = new Vector2(5, sprite.transform.localScale.y);
+                sprite.transform.localScale = new Vector2(Mathf.Abs(sprite.transform.localScale.x), sprite.transform.localScale.y);
                 break;
             case 1:
                 forces.AddForceX(-forcesApplied, ForceMode2D.Impulse);
                 animation.Play("run");
-                sprite.transform.localScale = new Vector2(-5, sprite.transform.localScale.y);
+                sprite.transform.localScale = new Vector2(-Mathf.Abs(sprite.transform.localScale.x), sprite.transform.localScale.y);
                 
                 break;
             default: // ono.
