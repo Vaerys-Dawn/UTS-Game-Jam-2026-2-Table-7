@@ -27,19 +27,21 @@ public class NPCController : MonoBehaviour, Damageable
     void Update()
     {
         time += Time.deltaTime;
+        print(health);
         if (time > nextMoveTime)
         {
-            nextMoveTime = Random.Range(1f, moveTimeInterval);
+            nextMoveTime = Random.Range(0f, moveTimeInterval);
             Action();
             time = 0;
         }
         if (health <= 0)
         {
-            Destroy(this.gameObject,1f);
+            Destroy(this.gameObject);
         }
     }
     private void Action()
     {
+
         switch (Random.Range(0, 2))
         {
             case 0:

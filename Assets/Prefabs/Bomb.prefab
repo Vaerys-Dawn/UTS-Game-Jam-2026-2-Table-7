@@ -550,6 +550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BombScript
   animSource: {fileID: 2875649467829440109}
   arrowSprite: {fileID: 3062536455147021179}
+  blastRadius: 1.5
 --- !u!95 &2091744335149796143
 Animator:
   serializedVersion: 7
