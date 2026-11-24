@@ -36,14 +36,17 @@ public class AudioManager : MonoBehaviour
     private int nextSfxSource = 0;
     private const int SfxSourceCount = 8;
 
+    // Used when no other AudioListener is active (Unity plays nothing without one).
+    private AudioListener backupListener;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
         if (Instance != null) return;
-        AudioManager prefab = Resources.Load<AudioManager>("AudioManager");
-        if (prefab == null)
+        GameObject prefab = Resources.Load<GameObject>("AudioManager");
+        if (prefab == null || prefab.GetComponent<AudioManager>() == null)
         {
-            Debug.LogWarning("AudioManager: Resources/AudioManager prefab not found, no audio will play.");
+            Debug.LogError("AudioManager: Assets/Resources/AudioManager.prefab is missing or has no AudioManager component, so no music or sound will play.");
             return;
         }
         Instantiate(prefab).name = "AudioManager";
@@ -71,7 +74,17 @@ public class AudioManager : MonoBehaviour
             sfxSources[i].playOnAwake = false;
         }
 
+        backupListener = gameObject.AddComponent<AudioListener>();
+        backupListener.enabled = false;
+
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    // Start runs once the first scene is fully loaded, so the first scene always
+    // gets its music even if the sceneLoaded event already fired before we subscribed.
+    void Start()
+    {
+        OnSceneReady(SceneManager.GetActiveScene().name);
     }
 
     void OnDestroy()
@@ -85,7 +98,25 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (mode == LoadSceneMode.Single) PlayMusicForScene(scene.name);
+        if (mode == LoadSceneMode.Single) OnSceneReady(scene.name);
+    }
+
+    private void OnSceneReady(string sceneName)
+    {
+        UpdateBackupListener();
+        PlayMusicForScene(sceneName);
+    }
+
+    // Turns on our own listener only when the scene has no enabled AudioListener of its own,
+    // so there is always exactly one and Unity doesn't warn about two.
+    private void UpdateBackupListener()
+    {
+        bool sceneHasListener = false;
+        foreach (AudioListener l in FindObjectsByType<AudioListener>())
+        {
+            if (l != backupListener && l.isActiveAndEnabled) { sceneHasListener = true; break; }
+        }
+        backupListener.enabled = !sceneHasListener;
     }
 
     private void PlayMusicForScene(string sceneName)
@@ -102,11 +133,17 @@ public class AudioManager : MonoBehaviour
     // (e.g. MainMenu -> Credit), so it doesn't restart from the beginning.
     public void PlayMusic(AudioClip clip)
     {
-        if (clip == null) { musicSource.Stop(); return; }
+        if (clip == null)
+        {
+            Debug.LogWarning("AudioManager: no music clip set for this scene.");
+            musicSource.Stop();
+            return;
+        }
         if (musicSource.clip == clip && musicSource.isPlaying) return;
         musicSource.clip = clip;
         musicSource.volume = musicVolume;
         musicSource.Play();
+        Debug.Log($"AudioManager: playing music '{clip.name}' in scene '{SceneManager.GetActiveScene().name}'.");
     }
 
     public static void Play(Sfx sfx, float volumeScale = 1f)
