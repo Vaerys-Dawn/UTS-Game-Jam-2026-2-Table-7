@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Attach to any obstacle that has a Collider2D.
-// Kills NPCs and the player on contact; enemies are ignored.
+// Kills NPCs, enemies and the player on contact.
 public class Obstacle : MonoBehaviour
 {
     // Works whether the obstacle's collider is solid...
@@ -27,14 +27,15 @@ public class Obstacle : MonoBehaviour
             return;
         }
 
-        // Only NPCs die here. Enemies fall through and nothing happens.
-        if (!other.CompareTag("NPC"))
+        // NPCs and enemies die here. The enemy counter treats a destroyed enemy as dead.
+        NPCController npc = other.GetComponentInParent<NPCController>();
+        GameObject target = npc != null ? npc.gameObject : other;
+        if (!target.CompareTag("NPC") && !target.CompareTag("Enemy"))
             return;
 
-        // Destroy the whole NPC instantly (no animation).
-        // GetComponentInParent also finds the NPC if the collider is on a child object.
-        NPCController npc = other.GetComponentInParent<NPCController>();
+        // Destroy it instantly (no animation).
+        // GetComponentInParent also finds the NPC/enemy if the collider is on a child object.
         AudioManager.Play(AudioManager.Sfx.NpcDeath);
-        Destroy(npc != null ? npc.gameObject : other);
+        Destroy(target);
     }
 }

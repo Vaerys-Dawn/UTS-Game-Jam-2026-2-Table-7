@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.32, y: 0.13, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 9.066, y: 9.066, z: 1.8132}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5223909663126968482}
@@ -195,9 +195,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dcd117bbddd56449bbdef68514a59a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  moveTimeInterval: 0
+  moveTimeInterval: 10
   forcesApplied: 10
   health: 100
+  particles: {fileID: 0}
 --- !u!50 &4538999876081334243
 Rigidbody2D:
   serializedVersion: 5
