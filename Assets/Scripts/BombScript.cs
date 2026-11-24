@@ -19,6 +19,10 @@ public class BombScript : MonoBehaviour, DamageSource
 
     Rigidbody2D rb;
 
+    [SerializeField] //Long added more
+    float blastRadius = 1.5f; // radius used to damage breakable tiles 
+    private bool exploded = false; // stops the bomb exploding twice 
+
     public GameObject GetSource()
     {
         return source;
@@ -73,6 +77,7 @@ public class BombScript : MonoBehaviour, DamageSource
 
     private void Explode()
     {
+        exploded = true; //Long added more
         animSource.SetActive(true);
         animator.SetTrigger("Explode");
         rb.linearVelocity = Vector3.zero;
@@ -81,13 +86,35 @@ public class BombScript : MonoBehaviour, DamageSource
             Damageable d = g.GetComponent<Damageable>();
             if ( d!= null)
             {
-                d.HandleDamage(this, 100);                
+                d.HandleDamage(this, 100);
+            }
+        }
+        DamageTilemaps(); //Long added more
+    }
+
+    // Finds tilemaps on the Terrain layer inside the blast and adds one hit to their breakable tiles. //Long added more
+    private void DamageTilemaps() {
+        HashSet<DestructibleTilemap> damaged = new HashSet<DestructibleTilemap>(); 
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, blastRadius, LayerMask.GetMask("Terrain")); 
+        foreach (Collider2D col in hits) 
+        {
+            DestructibleTilemap tilemap = col.GetComponentInParent<DestructibleTilemap>(); 
+            if (tilemap != null && damaged.Add(tilemap)) // each tilemap only once per explosion 
+            {
+                tilemap.ApplyExplosion(transform.position, blastRadius); 
             }
         }
     }
 
+    private void OnDrawGizmosSelected() // shows the blast radius in the Scene view //Long added more
+    {
+        Gizmos.color = Color.yellow; 
+        Gizmos.DrawWireSphere(transform.position, blastRadius); 
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (exploded) return; // already exploded, don't restart the countdown //Long added more
         doExplode = 10;
     }
 
