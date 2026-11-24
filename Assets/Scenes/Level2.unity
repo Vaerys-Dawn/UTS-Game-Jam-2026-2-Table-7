@@ -114872,14 +114872,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6889249148425549331, guid: 42eed0dec18e3ed41a9f910ee9d3bd99, type: 3}
-      propertyPath: windup
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6889249148425549331, guid: 42eed0dec18e3ed41a9f910ee9d3bd99, type: 3}
-      propertyPath: projectilePos.y
-      value: 0.2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
