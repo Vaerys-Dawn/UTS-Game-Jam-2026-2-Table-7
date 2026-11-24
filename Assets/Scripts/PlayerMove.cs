@@ -48,6 +48,19 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform playerSprite;
 
+    [Header("Dash")]
+    [SerializeField]
+    private float dashSpeed = 35f;
+    [SerializeField]
+    private float dashDuration = 0.15f;
+    [SerializeField]
+    private float dashCooldown = 0.6f;
+
+    private float dashTimer = 0f;          // > 0 while dashing
+    private float dashCooldownTimer = 0f;  // > 0 while dash is recharging
+    private float dashDirection = 1f;
+    private float savedGravity = 1f;
+
     private float attackDelay = -3;
     [SerializeField]
     private float windup = 0.5f;
@@ -78,6 +91,7 @@ public class PlayerMove : MonoBehaviour
             rb.AddForce(Vector2.up * 1000 * jumpMod);
             jumpLock = 0.5f; // Set a lock time for jumping
             hasJumped = true;
+            AudioManager.Play(AudioManager.Sfx.Jump);
         }
 
   
@@ -95,7 +109,8 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        HandleMovement();
+        HandleDash();
+        if (dashTimer <= 0f) HandleMovement(); // the dash controls the velocity while it lasts
 
         if (IsFacingRight)
         {
@@ -120,6 +135,7 @@ public class PlayerMove : MonoBehaviour
         {
             GameObject proj = Instantiate(projectile);
             proj.GetComponent<BombScript>().SetSource(this.gameObject, transform.position + projectilePos, Vector3.Normalize(controls.Look));
+            AudioManager.Play(AudioManager.Sfx.Throw);
             attackDelay = -3;
         }
 
@@ -128,6 +144,41 @@ public class PlayerMove : MonoBehaviour
     private void HandleCooldowns()
     {
       
+    }
+
+    // Quick horizontal burst in the held direction (or the way the player faces).
+    // Gravity is paused during the dash so it stays level, even in the air.
+    private void HandleDash()
+    {
+        if (dashCooldownTimer > 0f) dashCooldownTimer -= Time.deltaTime;
+
+        if (controls.Dash && dashTimer <= 0f && dashCooldownTimer <= 0f)
+        {
+            if (Mathf.Abs(controls.Move.x) > 0.1f)
+                dashDirection = Mathf.Sign(controls.Move.x);
+            else
+                dashDirection = IsFacingRight ? 1f : -1f;
+
+            IsFacingRight = dashDirection > 0f;
+            savedGravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            dashTimer = dashDuration;
+            dashCooldownTimer = dashCooldown;
+            animator.SetBool("IsRunning", true);
+            AudioManager.Play(AudioManager.Sfx.Dash);
+        }
+
+        if (dashTimer > 0f)
+        {
+            rb.linearVelocity = new Vector2(dashDirection * dashSpeed, 0f);
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0f)
+            {
+                // End of dash: give gravity back and drop to normal run speed.
+                rb.gravityScale = savedGravity;
+                rb.linearVelocity = new Vector2(dashDirection * maxSpeed, 0f);
+            }
+        }
     }
 
     private void HandleMovement()

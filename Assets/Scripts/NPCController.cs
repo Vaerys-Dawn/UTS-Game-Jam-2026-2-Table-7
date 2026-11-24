@@ -12,6 +12,7 @@ public class NPCController : MonoBehaviour, Damageable
     public float forcesApplied = 10;
     public float health = 100;
     private Animator animation;
+    private bool isDead = false;
 
     //movement variables
     void Start()
@@ -33,8 +34,10 @@ public class NPCController : MonoBehaviour, Damageable
             Action();
             time = 0;
         }
-        if (health <= 0)
+        if (health <= 0 && !isDead)
         {
+            isDead = true; // only play the death sound and start the destroy once
+            AudioManager.Play(AudioManager.Sfx.NpcDeath);
             Destroy(this.gameObject,1f);
         }
     }

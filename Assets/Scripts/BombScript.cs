@@ -82,6 +82,7 @@ public class BombScript : MonoBehaviour, DamageSource
     private void Explode()
     {
         exploded = true; //Long added more
+        AudioManager.Play(AudioManager.Sfx.Hit);
         animSource.SetActive(true);
         animator.SetTrigger("Explode");
         rb.linearVelocity = Vector3.zero;

@@ -46,6 +46,7 @@ public class EnemyShooter : MonoBehaviour
                 Vector2 angle = Vector2.Normalize(nearest.transform.position - transform.position + (Vector3.up * Mathf.Sqrt(Vector3.Distance(transform.position, nearest.transform.position)) * 0.2f));
                 GameObject newbullet = Instantiate(bullet);
                 newbullet.GetComponent<BombScript>().SetSource(this.gameObject, shootpoint.position, angle, throwforce);
+                AudioManager.Play(AudioManager.Sfx.Throw, 0.6f); // a bit quieter than the player's throw
 
 
             }
