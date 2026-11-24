@@ -34,10 +34,6 @@ public class EnemyShooter : MonoBehaviour
             }
             else
             {
-                GameObject newbullet = Instantiate(bullet);
-                newbullet.GetComponent<BombScript>().SetSource(this.gameObject);
-                newbullet.transform.position = shootpoint.position;
-                Rigidbody2D forces = newbullet.GetComponent<Rigidbody2D>();
                 GameObject nearest = npcs[0];
                 foreach (var item in npcs)
                 {
@@ -48,7 +44,8 @@ public class EnemyShooter : MonoBehaviour
                 }
 
                 Vector2 angle = Vector2.Normalize(nearest.transform.position - transform.position + (Vector3.up * Mathf.Sqrt(Vector3.Distance(transform.position, nearest.transform.position)) * 0.2f));
-                forces.AddForce(angle * throwforce);
+                GameObject newbullet = Instantiate(bullet);
+                newbullet.GetComponent<BombScript>().SetSource(this.gameObject, shootpoint.position, angle, throwforce);
 
 
             }
